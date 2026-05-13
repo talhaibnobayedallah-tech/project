@@ -50,7 +50,7 @@ lib.apply_dct.argtypes = [c.POINTER(CImage)]
 
 
 # --- Python Interface Class ---
-class TalhaImage:
+class Talha:
     def __init__(self, path_or_ptr, channels=1):
         if isinstance(path_or_ptr, str):
             # Read from file
@@ -78,16 +78,16 @@ class TalhaImage:
 
     # --- Operator Overloads ---
     def __add__(self, other):
-        return TalhaImage(lib.add_images(self.ptr, other.ptr))
+        return Talha(lib.add_images(self.ptr, other.ptr))
 
     def __sub__(self, other):
-        return TalhaImage(lib.sub_images(self.ptr, other.ptr))
+        return Talha(lib.sub_images(self.ptr, other.ptr))
 
     def __mul__(self, other):
-        return TalhaImage(lib.mul_images(self.ptr, other.ptr))
+        return Talha(lib.mul_images(self.ptr, other.ptr))
 
     def __truediv__(self, other):
-        return TalhaImage(lib.div_images(self.ptr, other.ptr))
+        return Talha(lib.div_images(self.ptr, other.ptr))
 
     # --- Filters and Transforms ---
     def convolve(self, kernel_list, kernel_size: int):
@@ -96,7 +96,7 @@ class TalhaImage:
         c_kernel = FloatArray(*kernel_list)
         
         res_ptr = lib.convolve(self.ptr, c_kernel, kernel_size)
-        return TalhaImage(res_ptr)
+        return Talha(res_ptr)
 
     def histogram(self):
         # Returns a standard python list of 256 integers
@@ -109,7 +109,7 @@ class TalhaImage:
         # Warning: For small images only, purely forward logic O(N^4)
         print("Calculating DCT... (This might take a while for large images)")
         res_ptr = lib.apply_dct(self.ptr)
-        return TalhaImage(res_ptr)
+        return Talha(res_ptr)
 
     # --- Memory Management ---
     def __del__(self):
